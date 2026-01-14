@@ -133,7 +133,7 @@ export const TOPIC_G1 = {
     },
 
     {
-      hu: "5) Magyarország helye: <strong>Közép‑Európában</strong>, a <strong>Kárpát‑medence</strong> központi részén fekszik (<strong>természetföldrajzi</strong> szempont).",
+      hu: "5) <strong>Magyarország helye: Közép‑Európában</strong>, a <strong>Kárpát‑medence</strong> központi részén fekszik (<strong>természetföldrajzi</strong> szempont).",
       es: "5) Hungría: en Europa Central, en la parte central de la cuenca de los Cárpatos (visión física).",
       en: "5) Hungary: in Central Europe, in the central Carpathian Basin (physical geography).",
     },
