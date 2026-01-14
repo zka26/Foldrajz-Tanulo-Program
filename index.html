@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="hu" data-theme="dark">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Magyar földrajz</title>
+  <link rel="icon" href="assets/logo.png"/>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <div class="container">
+    <header class="topbar">
+      <div class="brand">
+        <img id="logoImg" src="assets/logo.png" alt="Logo" onerror="this.src='assets/placeholder.svg'"/>
+        <div class="title">
+          <strong id="brandTitle">—</strong>
+          <span id="brandSub">—</span>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="btn navBtn" data-nav="home">Témák</button>
+        <button class="btn navBtn" data-nav="glossary">Szójegyzék</button>
+
+        <div class="pills" aria-label="Language">
+          <div class="pill active" data-lang="hu">HU</div>
+          <div class="pill" data-lang="en">EN</div>
+          <div class="pill" data-lang="es">ES</div>
+        </div>
+
+        <button class="btn" id="btnTheme">☀️ Világos</button>
+        <button class="btn danger" id="btnReset">↻ Reset</button>
+      </div>
+    </header>
+
+    <main id="app" style="margin-top:18px;"></main>
+  </div>
+
+  <script type="module" src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
