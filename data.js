@@ -12,9 +12,9 @@ const DATA = {
       en: "Hungary Geography – exam practice",
     },
     subtitle: {
-      hu: "(Utoljára frissítve: 20:40)",
-      es: "(Utoljára frissítve: 20:40)",
-      en: "(Utoljára frissítve: 20:40)",
+      hu: "(Utoljára frissítve: 21:20)",
+      es: "(Utoljára frissítve: 21:20)",
+      en: "(Utoljára frissítve: 21:20)",
     },
   },
 
