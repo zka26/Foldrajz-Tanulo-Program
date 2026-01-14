@@ -117,6 +117,12 @@ function t(obj) {
   return obj[state.lang] ?? obj.hu ?? obj.en ?? obj.es ?? "";
 }
 
+// Option B helper: allow HTML from your data strings to render.
+// Only use with *your own* static content (topics/*.js), not user input.
+function rawHtml(s) {
+  return String(s ?? "");
+}
+
 function load() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -276,7 +282,7 @@ function renderHome() {
           <div class="badge">${t(topic.badge)}</div>
         </div>
 
-        <p>${preview}</p>
+        <p>${rawHtml(preview)}</p>
 
         <div class="topic-foot">
           <div class="progress-row">
@@ -344,20 +350,20 @@ function renderTopic() {
 
 function renderTopicOverview(topic) {
   const intro = topic.intro ? t(topic.intro) : "";
-  const bullets = (topic.summaryBullets || []).map((b) => `<li>${t(b)}</li>`).join("");
-  const keyPoints = (topic.keyPoints || []).map((k) => `<li>${t(k)}</li>`).join("");
+  const bullets = (topic.summaryBullets || []).map((b) => `<li>${rawHtml(t(b))}</li>`).join("");
+  const keyPoints = (topic.keyPoints || []).map((k) => `<li>${rawHtml(t(k))}</li>`).join("");
 
   const materials = Array.isArray(topic.materials) ? topic.materials : [];
   const okMat = materials.filter((m) => (m.title?.hu || "").includes("Ok → Következmény"));
   const imgMat = materials.filter((m) => (m.title?.hu || "").includes("Képek"));
 
-  const extendedList = (topic.extended || []).map((x) => `<li>${t(x)}</li>`).join("");
+  const extendedList = (topic.extended || []).map((x) => `<li>${rawHtml(t(x))}</li>`).join("");
 
   const okHtml =
     okMat.length > 0
       ? okMat
           .map((m) => {
-            const lines = (m.lines || []).map((l) => `<li>${t(l)}</li>`).join("");
+            const lines = (m.lines || []).map((l) => `<li>${rawHtml(t(l))}</li>`).join("");
             return `
               <div class="qcard">
                 <h4>${t(m.title)}</h4>
@@ -406,7 +412,7 @@ function renderTopicOverview(topic) {
     <div class="kv">
       <div class="block">
         <h3>${state.lang === "hu" ? "Bevezető" : state.lang === "es" ? "Introducción" : "Introduction"}</h3>
-        <div class="qtext">${intro || "—"}</div>
+        <div class="qtext">${intro ? rawHtml(intro) : "—"}</div>
       </div>
 
       <div class="block">
@@ -1413,4 +1419,14 @@ function markCardUnknown(topicId, cardId) {
   const st = ensureCardTrainer(topicId);
   st.revealed = false;
   render();
+}
+
+function renderInlineMd(s) {
+  // 1) escape HTML first (safe)
+  const safe = escapeHtml(s ?? "");
+
+  // 2) very small markdown subset
+  return safe
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\*(.+?)\*/g, "<em>$1</em>");
 }

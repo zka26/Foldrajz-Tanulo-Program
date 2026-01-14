@@ -19,7 +19,7 @@ export const TOPIC_G1 = {
   // --- exam-friendly opener (what she says before the topic) ---
   intro: {
     hu:
-      "A témám **Magyarország elhelyezkedése**. Röviden elmondom, hol van **Európán belül** és a **Kárpát‑medencében**, majd a **domborzatról**, az **éghajlatról** és a **vízrajzról** beszélek, végül arról, hogyan alakította át az **ember** a **tájat**.",
+      "A témám <strong>Magyarország elhelyezkedése</strong>. Röviden elmondom, hol van <strong>Európán belül</strong> és a <strong>Kárpát‑medencében</strong>, majd a <strong>domborzatról</strong>, az <strong>éghajlatról</strong> és a <strong>vízrajzról</strong> beszélek, végül arról, hogyan alakította át az <strong>ember</strong> a <strong>tájat</strong>.",
     es:
       "Mi tema es la ubicación de Hungría. Primero digo dónde está en Europa y en la cuenca de los Cárpatos, luego hablo del relieve, del clima y de la hidrografía, y al final de cómo el ser humano transformó el paisaje.",
     en:
@@ -74,146 +74,146 @@ export const TOPIC_G1 = {
   // Keep each line as a full, speakable sentence.
   keyPoints: [
     {
-      hu: "1) **Európa** helye: Európa földrajzilag **Eurázsia** része, de **történelmi‑kulturális** okokból külön **kontinensként** szoktuk említeni.",
+      hu: "1) <strong>Európa</strong> helye: Európa földrajzilag <strong>Eurázsia</strong> része, de <strong>történelmi‑kulturális</strong> okokból külön <strong>kontinensként</strong> szoktuk említeni.",
       es: "1) Europa: geográficamente es parte de Eurasia, pero por razones históricas/culturales se trata como continente.",
       en: "1) Europe: geographically part of Eurasia, but often treated as a separate continent for historical/cultural reasons.",
     },
     {
-      hu: "Európa területe kb. **10,5 millió km²**.",
+      hu: "Európa területe kb. <strong>10,5 millió km²</strong>.",
       es: "La superficie de Europa es de aprox. 10,5 millones de km².",
       en: "Europe’s area is about 10.5 million km².",
     },
     {
-      hu: "Európa határai: **Uráli‑hegység**, **Kaukázus**, **Boszporusz** és a **Dardanellák**, valamint a **Gibraltári‑szoros** (a tanári térképen így szerepel).",
+      hu: "Európa határai: <strong>Uráli‑hegység</strong>, <strong>Kaukázus</strong>, <strong>Boszporusz</strong> és a <strong>Dardanellák</strong>, valamint a <strong>Gibraltári‑szoros</strong> (a tanári térképen így szerepel).",
       es: "Límites: Urales, Cáucaso, Bósforo y Dardanelos, y el Estrecho de Gibraltar (según el mapa del profe).",
       en: "Borders: Ural Mountains, Caucasus, Bosporus & Dardanelles, and the Strait of Gibraltar (as shown in class).",
     },
 
     {
-      hu: "2) Európa felszíne: nagy **síkságok**, régi **röghegységek** és fiatal **lánchegységek** mozaikja.",
+      hu: "2) Európa felszíne: nagy <strong>síkságok</strong>, régi <strong>röghegységek</strong> és fiatal <strong>lánchegységek</strong> mozaikja.",
       es: "2) Relieve de Europa: mosaico de grandes llanuras, macizos antiguos y cordilleras jóvenes.",
       en: "2) Europe’s relief: a mosaic of plains, old block mountains, and young fold mountains.",
     },
     {
-      hu: "A síkságok gyakran **folyami feltöltéssel** keletkeztek: a folyók lerakják a **hordalékot**.",
+      hu: "A síkságok gyakran <strong>folyami feltöltéssel</strong> keletkeztek: a folyók lerakják a <strong>hordalékot</strong>.",
       es: "Las llanuras suelen formarse por relleno fluvial: los ríos depositan sedimentos.",
       en: "Plains often form by river deposition: rivers lay down sediment.",
     },
     {
-      hu: "A röghegységek régen keletkeztek és **lepusztultak**; **bányászat** miatt gazdaságilag jelentősek (pl. **kőszén**, **vasérc**, **urán**).",
+      hu: "A röghegységek régen keletkeztek és <strong>lepusztultak</strong>; <strong>bányászat</strong> miatt gazdaságilag jelentősek (pl. <strong>kőszén</strong>, <strong>vasérc</strong>, <strong>urán</strong>).",
       es: "Los macizos antiguos son viejos y erosionados; son importantes por la minería (carbón, hierro, uranio).",
       en: "Old block mountains formed long ago and are eroded; they matter for mining (coal, iron ore, uranium).",
     },
     {
-      hu: "A fiatal lánchegységek a **földtörténeti újidőben** keletkeztek, **csipkézett gerincek** jellemzik, gyakran **erdőkben gazdagok**.",
+      hu: "A fiatal lánchegységek a <strong>földtörténeti újidőben</strong> keletkeztek, <strong>csipkézett gerincek</strong> jellemzik, gyakran <strong>erdőkben gazdagok</strong>.",
       es: "Las cordilleras jóvenes se formaron en tiempos geológicos recientes, con crestas agudas; suelen ser ricas en bosques.",
       en: "Young fold mountains formed in geologically recent times, with sharp ridges; often forest‑rich.",
     },
 
     {
-      hu: "3) Európa éghajlata: túlnyomórészt az **északi mérsékelt övezetben** fekszik, de északon a **hideg övezetbe** nyúlik.",
+      hu: "3) Európa éghajlata: túlnyomórészt az <strong>északi mérsékelt övezetben</strong> fekszik, de északon a <strong>hideg övezetbe</strong> nyúlik.",
       es: "3) Clima de Europa: mayormente en la zona templada del hemisferio norte, pero al norte entra en la zona fría.",
       en: "3) Europe’s climate: mostly in the northern temperate zone, extending into the cold zone in the north.",
     },
     {
-      hu: "Az éghajlatot meghatározza: az **óceánoktól való távolság**, **tengeráramlások** és a **domborzat**.",
+      hu: "Az éghajlatot meghatározza: az <strong>óceánoktól való távolság</strong>, <strong>tengeráramlások</strong> és a <strong>domborzat</strong>.",
       es: "Factores: distancia al océano, corrientes marinas y relieve.",
       en: "Key factors: distance from oceans, ocean currents, and relief.",
     },
     {
-      hu: "Az **Atlanti‑óceán** felől érkező **nyugatias szelek** **nedves levegőt** hoznak, ezért **Nyugat‑Európa** csapadékosabb.",
+      hu: "Az <strong>Atlanti‑óceán</strong> felől érkező <strong>nyugatias szelek</strong> <strong>nedves levegőt</strong> hoznak, ezért <strong>Nyugat‑Európa</strong> csapadékosabb.",
       es: "Los vientos del oeste traen aire húmedo del Atlántico; por eso Europa occidental es más lluviosa.",
       en: "Westerlies bring moist Atlantic air, so Western Europe is wetter.",
     },
 
     {
-      hu: "4) Európa vízrajza: az **éghajlat** miatt általában jó a **felszíni vizek utánpótlása**; sok helyen a **csapadék** táplálja a **folyókat**.",
+      hu: "4) Európa vízrajza: az <strong>éghajlat</strong> miatt általában jó a <strong>felszíni vizek utánpótlása</strong>; sok helyen a <strong>csapadék</strong> táplálja a <strong>folyókat</strong>.",
       es: "4) Hidrografía: por el clima hay buen aporte de agua superficial; la lluvia alimenta muchos ríos.",
       en: "4) Hydrology: climate usually provides good water supply for surface waters; rainfall feeds many rivers.",
     },
 
     {
-      hu: "5) Magyarország helye: **Közép‑Európában**, a **Kárpát‑medence** központi részén fekszik (**természetföldrajzi** szempont).",
+      hu: "5) Magyarország helye: <strong>Közép‑Európában</strong>, a <strong>Kárpát‑medence</strong> központi részén fekszik (<strong>természetföldrajzi</strong> szempont).",
       es: "5) Hungría: en Europa Central, en la parte central de la cuenca de los Cárpatos (visión física).",
       en: "5) Hungary: in Central Europe, in the central Carpathian Basin (physical geography).",
     },
     {
-      hu: "Társadalomföldrajzilag: **Közép‑Európa**, gyakran '**centrum–félperiféria**' térségként is említik (tanári felosztás).",
+      hu: "Társadalomföldrajzilag: <strong>Közép‑Európa</strong>, gyakran '<strong>centrum–félperiféria</strong>' térségként is említik (tanári felosztás).",
       es: "En geografía humana: Europa Central; a veces se menciona como zona de ‘centro–semiperiferia’ (en clase).",
       en: "In human geography: Central Europe; sometimes described as a ‘core–semi‑periphery’ zone (class framing).",
     },
     {
-      hu: "Domborzati arányok: **68% 200 m alatt**, **30% 200–400 m között**, **2% 400 m fölött** → alapvetően **sík** és **dombos** jelleg.",
+      hu: "Domborzati arányok: <strong>68% 200 m alatt</strong>, <strong>30% 200–400 m között</strong>, <strong>2% 400 m fölött</strong> → alapvetően <strong>sík</strong> és <strong>dombos</strong> jelleg.",
       es: "Altitudes: 68% bajo 200 m, 30% 200–400 m, 2% sobre 400 m → paisaje sobre todo llano y ondulado.",
       en: "Altitudes: 68% <200 m, 30% 200–400 m, 2% >400 m → mostly plains and hills.",
     },
 
     {
-      hu: "6) A Kárpát‑medence éghajlata: **mérsékelt övezeti**, döntően **kontinentális**; a tél **hideg**, a nyár **meleg**, **aszály** is előfordul.",
+      hu: "6) A Kárpát‑medence éghajlata: <strong>mérsékelt övezeti</strong>, döntően <strong>kontinentális</strong>; a tél <strong>hideg</strong>, a nyár <strong>meleg</strong>, <strong>aszály</strong> is előfordul.",
       es: "6) Clima de la cuenca: templado y mayormente continental; inviernos fríos, veranos calurosos, puede haber sequía.",
       en: "6) Basin climate: temperate and mainly continental; cold winters, hot summers, drought can occur.",
     },
     {
-      hu: "Nyugat felől **nedvesebb** (**nedves kontinentális**), kelet felé haladva **szárazabb kontinentális** jelleg erősödik.",
+      hu: "Nyugat felől <strong>nedvesebb</strong> (<strong>nedves kontinentális</strong>), kelet felé haladva <strong>szárazabb kontinentális</strong> jelleg erősödik.",
       es: "Más húmedo al noroeste; más seco y continental hacia el este.",
       en: "Wetter in the northwest; drier, more continental toward the east.",
     },
 
     {
-      hu: "7) Csapadék és szél: Európában jellemzően **nyugatról keletre csökken** a **csapadék**; a **hegyek** több csapadékot kapnak, mint a **medence belseje**.",
+      hu: "7) Csapadék és szél: Európában jellemzően <strong>nyugatról keletre csökken</strong> a <strong>csapadék</strong>; a <strong>hegyek</strong> több csapadékot kapnak, mint a <strong>medence belseje</strong>.",
       es: "7) Precipitación y viento: suele disminuir de oeste a este; las montañas reciben más que el interior de la cuenca.",
       en: "7) Precipitation & wind: often decreases west→east; mountains are wetter than the basin interior.",
     },
     {
-      hu: "A medencét körülvevő **hegységek** felemelik a **légáramlatokat**, ezért könnyebben képződnek **felhők** és **csapadék** a **peremeken**.",
+      hu: "A medencét körülvevő <strong>hegységek</strong> felemelik a <strong>légáramlatokat</strong>, ezért könnyebben képződnek <strong>felhők</strong> és <strong>csapadék</strong> a <strong>peremeken</strong>.",
       es: "Las montañas alrededor elevan el aire, por eso en los bordes se forman más nubes y lluvia.",
       en: "Surrounding mountains lift air masses, so clouds and precipitation form more easily at the margins.",
     },
     {
-      hu: "A legszárazabb terület gyakran az **Alföld belső része** (különösen a **középső területek**).",
+      hu: "A legszárazabb terület gyakran az <strong>Alföld belső része</strong> (különösen a <strong>középső területek</strong>).",
       es: "La zona más seca suele ser el interior de la Gran Llanura (Alföld).",
       en: "The driest area is often the inner Great Plain (Alföld).",
     },
 
     {
-      hu: "8) Víz a medencében: a **folyók befelé tartanak**; a **vízszint ingadozik** az **egyenlőtlen csapadék** miatt, ezért **árvízveszély** is van.",
+      hu: "8) Víz a medencében: a <strong>folyók befelé tartanak</strong>; a <strong>vízszint ingadozik</strong> az <strong>egyenlőtlen csapadék</strong> miatt, ezért <strong>árvízveszély</strong> is van.",
       es: "8) Agua: los ríos tienden hacia adentro; el nivel varía por la lluvia desigual, por eso hay riesgo de inundación.",
       en: "8) Water: rivers tend inward; water levels vary due to uneven rainfall, so flood risk exists.",
     },
     {
-      hu: "Árvíztípusok: **jeges ár** (**hó‑/jégolvadás** a **tél végén**, **kora tavasszal**) és **zöldár** (**sok eső** a **tavasz végén**, **nyár elején**).",
+      hu: "Árvíztípusok: <strong>jeges ár</strong> (<strong>hó‑/jégolvadás</strong> a <strong>tél végén</strong>, <strong>kora tavasszal</strong>) és <strong>zöldár</strong> (<strong>sok eső</strong> a <strong>tavasz végén</strong>, <strong>nyár elején</strong>).",
       es: "Tipos: crecida de hielo (deshielo) y zöldár (mucha lluvia a finales de primavera/inicios de verano).",
       en: "Types: ice flood (snow/ice melt) and green flood (heavy rains in late spring/early summer).",
     },
     {
-      hu: "Magyarország a medence **mélyebb részein** fekszik, ezért a folyók **esése kicsi**, **vízenergia‑termelésre** kevésbé **kedvező**.",
+      hu: "Magyarország a medence <strong>mélyebb részein</strong> fekszik, ezért a folyók <strong>esése kicsi</strong>, <strong>vízenergia‑termelésre</strong> kevésbé <strong>kedvező</strong>.",
       es: "Hungría está en la parte más baja de la cuenca; por eso la pendiente de los ríos es pequeña és no es ideal para hidroelectricidad.",
       en: "Hungary lies in lower parts of the basin; river gradients are small, so hydropower is less favorable.",
     },
 
     {
-      hu: "9) A táj arculata: az elmúlt ~**1000 évben** az **ember** sokat alakított rajta (**erdőirtás**, **mezőgazdaság** terjeszkedése, **folyószabályozások**, **gátak**).",
+      hu: "9) A táj arculata: az elmúlt ~<strong>1000 évben</strong> az <strong>ember</strong> sokat alakított rajta (<strong>erdőirtás</strong>, <strong>mezőgazdaság</strong> terjeszkedése, <strong>folyószabályozások</strong>, <strong>gátak</strong>).",
       es: "9) Paisaje: en ~1000 años el ser humano lo transformó mucho (deforestación, expansión agrícola, regulación de ríos, diques).",
       en: "9) Landscape: over ~1000 years humans reshaped it strongly (deforestation, farming expansion, river regulation, levees).",
     },
     {
-      hu: "A **folyószabályozás** és **gátépítés** különösen a **18. századtól** vált jellemzővé (tananyag kulcsszó: '**gát**').",
+      hu: "A <strong>folyószabályozás</strong> és <strong>gátépítés</strong> különösen a <strong>18. századtól</strong> vált jellemzővé (tananyag kulcsszó: '<strong>gát</strong>').",
       es: "La regulación fluvial y los diques se vuelven típicos desde el siglo XVIII (palabra clave: ‘dique’).",
       en: "River regulation and levees become typical from the 18th century (key word: ‘levee’).",
     },
 
     {
-      hu: "10) **Földtani háttér** (elég 1 mondat): a terület **lemezszegélyhez** kötődik, ezért a **Kárpát‑medence** földtani múltja **összetett**.",
+      hu: "10) <strong>Földtani háttér</strong> (elég 1 mondat): a terület <strong>lemezszegélyhez</strong> kötődik, ezért a <strong>Kárpát‑medence</strong> földtani múltja <strong>összetett</strong>.",
       es: "10) Geología (basta 1 frase): está ligada a un borde de placas, por eso su historia geológica es compleja.",
       en: "10) Geology (one sentence is enough): linked to a plate margin, so the basin’s geological history is complex.",
     },
     {
-      hu: "A **jégkorszakban** az észak felől előrenyomuló **jég** nem érte el a **Kárpát‑medencét**; a felszínt főleg **folyók** és a **szél** formálta.",
+      hu: "A <strong>jégkorszakban</strong> az észak felől előrenyomuló <strong>jég</strong> nem érte el a <strong>Kárpát‑medencét</strong>; a felszínt főleg <strong>folyók</strong> és a <strong>szél</strong> formálta.",
       es: "En la glaciación el hielo del norte no llegó a la cuenca; el relieve lo modelaron sobre todo ríos y viento.",
       en: "During the Ice Age northern ice did not reach the basin; rivers and wind shaped the surface.",
     },
     {
-      hu: "A **szél** finom port (**löszt**) fújt be a medencébe – ebből jó **termőtalaj** is kialakult (**mezőgazdasághoz** kapcsolható).",
+      hu: "A <strong>szél</strong> finom port (<strong>löszt</strong>) fújt be a medencébe – ebből jó <strong>termőtalaj</strong> is kialakult (<strong>mezőgazdasághoz</strong> kapcsolható).",
       es: "El viento transportó polvo fino (loess) al interior; de ahí se formaron suelos fértiles (ligado a la agricultura).",
       en: "Wind blew fine dust (loess) into the basin, creating fertile soils (linked to agriculture).",
     },
@@ -222,27 +222,27 @@ export const TOPIC_G1 = {
   // --- extra details (only if she wants to sound “pro”) ---
   extended: [
     {
-      hu: "Európa **regionális felosztása** (tanári lista): **Nyugat‑Európa**, **Dél‑Európa**, **Észak‑Európa**, **Közép‑Európa**, **Kelet‑Európa**.",
+      hu: "Európa <strong>regionális felosztása</strong> (tanári lista): <strong>Nyugat‑Európa</strong>, <strong>Dél‑Európa</strong>, <strong>Észak‑Európa</strong>, <strong>Közép‑Európa</strong>, <strong>Kelet‑Európa</strong>.",
       es: "Regiones (lista): Europa Occidental, Meridional, Septentrional, Central y Oriental.",
       en: "Regional division (class list): Western, Southern, Northern, Central, Eastern Europe.",
     },
     {
-      hu: "Az **Atlanti‑óceán** erős **párolgása** és a **nyugatias szelek** miatt a kontinens **nyugati felén** sok a **csapadék**; ez a **zöld legelőknek** is kedvez (pl. **füves sportok** elterjedése).",
+      hu: "Az <strong>Atlanti‑óceán</strong> erős <strong>párolgása</strong> és a <strong>nyugatias szelek</strong> miatt a kontinens <strong>nyugati felén</strong> sok a <strong>csapadék</strong>; ez a <strong>zöld legelőknek</strong> is kedvez (pl. <strong>füves sportok</strong> elterjedése).",
       es: "Por la evaporación del Atlántico y los vientos del oeste, el oeste es lluvioso; favorece praderas verdes (ej. deportes en césped).",
       en: "Atlantic evaporation + westerlies make the west rainy; it supports green pastures (e.g., grass sports).",
     },
     {
-      hu: "A **csapadékeloszlást** két **kulcsszóval** magyarázd: **óceántól való távolság** + **domborzat** (**orografikus csapadék** a **hegyeknél**).",
+      hu: "A <strong>csapadékeloszlást</strong> két <strong>kulcsszóval</strong> magyarázd: <strong>óceántól való távolság</strong> + <strong>domborzat</strong> (<strong>orografikus csapadék</strong> a <strong>hegyeknél</strong>).",
       es: "Explica la precipitación con dos claves: distancia al océano + relieve (lluvia orográfica en montañas).",
       en: "Explain precipitation with two keys: distance from ocean + relief (orographic rainfall in mountains).",
     },
     {
-      hu: "**Vízgazdálkodási** mondat (ha kérdezik): a **beérkező folyóvizek** miatt a **vízkészlet** sokszor **nagyobb**, mint a helyben lehulló **csapadék**, de a **területi eloszlás** kedvezőtlen lehet.",
+      hu: "<strong>Vízgazdálkodási</strong> mondat (ha kérdezik): a <strong>beérkező folyóvizek</strong> miatt a <strong>vízkészlet</strong> sokszor <strong>nagyobb</strong>, mint a helyben lehulló <strong>csapadék</strong>, de a <strong>területi eloszlás</strong> kedvezőtlen lehet.",
       es: "Frase de gestión del agua: por los ríos entrantes el recurso puede ser mayor que la lluvia local, pero la distribución espacial no siempre es favorable.",
       en: "Water management sentence: inflowing rivers can make water resources larger than local rainfall, but spatial distribution can be unfavorable.",
     },
     {
-      hu: "Kapcsolás **mezőgazdasághoz**: a **löszös talaj** **termékeny**, ezért sok a **szántóföld**; ugyanakkor az **aszályos időszakok** **kockázatot** jelentenek.",
+      hu: "Kapcsolás <strong>mezőgazdasághoz</strong>: a <strong>löszös talaj</strong> <strong>termékeny</strong>, ezért sok a <strong>szántóföld</strong>; ugyanakkor az <strong>aszályos időszakok</strong> <strong>kockázatot</strong> jelentenek.",
       es: "Conexión con agricultura: suelos de loess son fértiles, por eso hay mucho cultivo; pero la sequía es un riesgo.",
       en: "Link to farming: loess soils are fertile, so arable land is extensive; drought periods are a risk.",
     },
