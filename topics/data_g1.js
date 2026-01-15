@@ -424,25 +424,27 @@ export const TOPIC_G1 = {
       answerIndex: 0,
     },
 
-    {
+      {
       id: "g1q5",
-      type: "order",
+      type: "match",
       prompt: {
-        hu: "Rendezd növekvő tengerszint feletti magasság szerint a kategóriákat!",
-        es: "Ordena por altitud creciente las categorías.",
-        en: "Order the categories by increasing elevation.",
+        hu: "Párosítsd: tengerszint feletti magasság → síkság?",
+        es: "Empareja: altitud creciente → categorías",
+        en: "Match: elevation → categories",
       },
-      items: [
-        { k: "A0", hu: "200 m alatt (68%)", es: "Bajo 200 m (68%)", en: "Below 200 m (68%)" },
-        { k: "A1", hu: "200–400 m (30%)", es: "200–400 m (30%)", en: "200–400 m (30%)" },
-        { k: "A2", hu: "400 m fölött (2%)", es: "Sobre 400 m (2%)", en: "Above 400 m (2%)" },
+      left: [
+          { k: "MelysegSzam", hu: "200m alatt", es: "200m alatt", en: "200m alatt" },
+          { k: "AlfoldSzam", hu: "0-200m", es: "0-200m", en: "0-200m" },
+          { k: "HatsagSzam", hu: "200-500m", es: "200-500m", en: "200-500m" },
+          { k: "FennsikSzam", hu: "500m felett", es: "500m felett", en: "500m felett" },
       ],
-      correctOrder: ["A0", "A1", "A2"],
-      explanation: {
-        hu: "A lényeg: Magyarország alacsony fekvésű; a terület döntő része 200 m alatt van.",
-        es: "Lo clave: Hungría es de baja altitud; la mayoría está bajo 200 m.",
-        en: "Key: Hungary is low‑lying; most of it is under 200 m.",
-      },
+      right: [
+          { k: "Melyseg", hu: "Mélység", es: "Mélység", en: "Mélység" },
+          { k: "Alfold", hu: "Alföld", es: "Alföld", en: "Alföld" },
+          { k: "Hatsag", hu: "Hátság", es: "Hátság", en: "Hátság" },
+          { k: "Fennsik", hu: "Fennsík", es: "Fennsík", en: "Fennsík" },
+      ],
+          pairs: { MelysegSzam: "Melyseg", AlfoldSzam: "Alfold", HatsagSzam: "Hatsag", FennsikSzam: "Fennsik" },
     },
 
     {
