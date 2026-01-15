@@ -852,6 +852,11 @@ function ensureMapsState() {
   if (!window.__mapsState.labelInputs) window.__mapsState.labelInputs = {};
   if (!window.__mapsState.showBank) window.__mapsState.showBank = {};
   if (!window.__mapsState.shuffle) window.__mapsState.shuffle = {};
+
+  // NEW (for selfcheck)
+  if (!window.__mapsState.selfcheckRevealed) window.__mapsState.selfcheckRevealed = {}; // key -> bool
+  if (!window.__mapsState.selfcheckResult) window.__mapsState.selfcheckResult = {}; // key -> "ok" | "bad"
+
   return window.__mapsState;
 }
 
@@ -889,7 +894,10 @@ function renderMaps() {
   const sqHtml = items
     .map((it) => {
       const sqKey = `${selectedPack.id}__${it.id}`;
-      const status = st.lastCheck?.[sqKey] || "new"; // new | ok | bad
+      const status =
+        selectedPack.type === "selfcheck"
+          ? st.selfcheckResult?.[sqKey] || "new"
+          : st.lastCheck?.[sqKey] || "new";
       const cls = status === "ok" ? "sq ok" : status === "bad" ? "sq bad" : "sq new";
 
       return `
@@ -910,7 +918,9 @@ function renderMaps() {
   const main =
     selectedPack.type === "label" && selectedItem
       ? renderMapsLabel(selectedPack, selectedItem)
-      : `
+      : selectedPack.type === "selfcheck" && selectedItem
+        ? renderMapsSelfcheck(selectedPack, selectedItem)
+        : `
         <div class="qcard">
           <h4>${state.lang === "hu" ? "Nem támogatott típus" : state.lang === "es" ? "Tipo no soportado" : "Unsupported type"}</h4>
           <div class="qtext">${escapeHtml(String(selectedPack.type || ""))}</div>
@@ -1055,154 +1065,64 @@ function renderMapsLabel(pack, item) {
   `;
 }
 
-function mapsSelectPack(packId) {
+function renderMapsSelfcheck(pack, item) {
   const st = ensureMapsState();
-  st.selectedPackId = unescapeHtml(packId);
-  st.selectedItemId = "";
-  render();
+  const key = `${pack.id}__${item.id}`;
+  const revealed = !!st.selfcheckRevealed[key];
+
+  return `
+    <div class="qcard" style="margin-top:12px;">
+      <h4>${escapeHtml(item.id)} • ${state.lang === "hu" ? "Önellenőrzés" : state.lang === "es" ? "Autoevaluación" : "Self-check"}</h4>
+
+      <div class="qtext" style="color:var(--muted);">${t(item.front)}</div>
+
+      <div class="media" style="margin-top:10px;">
+        <img src="${escapeHtml(item.image)}" alt="" onerror="this.src='assets/placeholder.svg'"/>
+      </div>
+
+      <div class="map-actions">
+        <button class="btn primary" onclick="mapsRevealSelfcheck('${escapeHtml(pack.id)}','${escapeHtml(item.id)}')">
+          ${revealed ? (state.lang === "hu" ? "Elrejtés" : state.lang === "es" ? "Ocultar" : "Hide") : state.lang === "hu" ? "Válasz" : state.lang === "es" ? "Respuesta" : "Answer"}
+        </button>
+      </div>
+
+      ${
+        revealed
+          ? `
+            <div class="answer-bank">
+              ${escapeHtml(t(item.back))}
+            </div>
+
+            <div class="map-actions">
+              <button class="btn primary" onclick="mapsSelfcheckSetResult('${escapeHtml(pack.id)}','${escapeHtml(item.id)}','ok')">
+                ${state.lang === "hu" ? "Tudtam" : state.lang === "es" ? "Lo sabía" : "I knew"}
+              </button>
+              <button class="btn" onclick="mapsSelfcheckSetResult('${escapeHtml(pack.id)}','${escapeHtml(item.id)}','bad')">
+                ${state.lang === "hu" ? "Nem tudtam" : state.lang === "es" ? "No lo sabía" : "I didn’t know"}
+              </button>
+            </div>
+          `
+          : ""
+      }
+    </div>
+  `;
 }
 
-function mapsSelectItem(packId, itemId) {
-  const st = ensureMapsState();
-  st.selectedPackId = unescapeHtml(packId);
-  st.selectedItemId = unescapeHtml(itemId);
-  render();
-}
-
-function mapsSetLabelValue(inputsKey, n, value) {
-  const st = ensureMapsState();
-  const key = unescapeHtml(inputsKey);
-  const labelKey = unescapeHtml(n);
-  if (!st.labelInputs[key]) st.labelInputs[key] = {};
-  st.labelInputs[key][labelKey] = value ?? "";
-
-  // IMPORTANT: do NOT call render() here, otherwise the input loses focus on every keystroke.
-  // Visual feedback is applied when pressing "Ellenőrzés".
-}
-
-function mapsToggleBank(inputsKey) {
-  const st = ensureMapsState();
-  const key = unescapeHtml(inputsKey);
-  st.showBank[key] = !st.showBank[key];
-  render();
-}
-
-function mapsClearLabels(packId, itemId) {
+function mapsRevealSelfcheck(packId, itemId) {
   const st = ensureMapsState();
   const key = `${unescapeHtml(packId)}__${unescapeHtml(itemId)}`;
-  st.labelInputs[key] = {};
-  if (!st.perLabelStatus) st.perLabelStatus = {};
-  st.perLabelStatus[key] = {};
+  st.selfcheckRevealed[key] = !st.selfcheckRevealed[key];
   render();
 }
 
-function mapsCheckLabels(packId, itemId) {
+function mapsSelfcheckSetResult(packId, itemId, result) {
   const st = ensureMapsState();
-  const pid = unescapeHtml(packId);
-  const iid = unescapeHtml(itemId);
+  const key = `${unescapeHtml(packId)}__${unescapeHtml(itemId)}`;
 
-  const pack = (DATA.maps?.packs || []).find((p) => p.id === pid);
-  const item = (pack?.items || []).find((it) => it.id === iid);
-  if (!pack || !item) return;
-
-  const inputsKey = `${pid}__${iid}`;
-  const labels = item.labels || [];
-  const inState = st.labelInputs[inputsKey] || {};
-
-  if (!st.perLabelStatus) st.perLabelStatus = {};
-  st.perLabelStatus[inputsKey] = {};
-
-  for (const l of labels) {
-    const n = String(l.n);
-    const user = inState[n] ?? "";
-    const ok = isAcceptedAnswer(user, l.answers || []);
-    st.perLabelStatus[inputsKey][n] = ok ? "ok" : "bad";
-  }
-
-  st.lastCheckedKey = inputsKey;
-
-  // update square state
-  if (!st.lastCheck) st.lastCheck = {};
-  const sqKey = `${pid}__${iid}`;
-  const allOk = labels.every((l) => st.perLabelStatus[inputsKey][String(l.n)] === "ok");
-  const anyBad = labels.some((l) => st.perLabelStatus[inputsKey][String(l.n)] === "bad");
-  st.lastCheck[sqKey] = allOk ? "ok" : anyBad ? "bad" : "new";
+  st.selfcheckRevealed[key] = true;
+  st.selfcheckResult[key] = result === "ok" ? "ok" : "bad";
 
   render();
-}
-
-function dedupeStrings(arr) {
-  const seen = new Set();
-  const res = [];
-  for (const x of arr || []) {
-    const s = String(x ?? "").trim();
-    if (!s) continue;
-    const k = s.toLowerCase();
-    if (seen.has(k)) continue;
-    seen.add(k);
-    res.push(s);
-  }
-  return res;
-}
-
-function normalizeAnswer(s) {
-  // lower + trim + remove accents + collapse whitespace
-  const raw = String(s ?? "")
-    .trim()
-    .toLowerCase();
-
-  return raw
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function levenshtein(a, b) {
-  if (a === b) return 0;
-  if (a.length === 0) return b.length;
-  if (b.length === 0) return a.length;
-
-  const v0 = new Array(b.length + 1);
-  const v1 = new Array(b.length + 1);
-
-  for (let i = 0; i <= b.length; i++) v0[i] = i;
-
-  for (let i = 0; i < a.length; i++) {
-    v1[0] = i + 1;
-    for (let j = 0; j < b.length; j++) {
-      const cost = a[i] === b[j] ? 0 : 1;
-      v1[j + 1] = Math.min(v1[j] + 1, v0[j + 1] + 1, v0[j] + cost);
-    }
-    for (let j = 0; j <= b.length; j++) v0[j] = v1[j];
-  }
-
-  return v1[b.length];
-}
-
-function allowedDistance(len) {
-  // "medium tolerance" rule (confirmed)
-  if (len <= 6) return 1;
-  if (len <= 12) return 2;
-  return 3;
-}
-
-function isAcceptedAnswer(userValue, acceptedAnswers) {
-  const u = normalizeAnswer(userValue);
-  if (!u) return false;
-
-  for (const a of acceptedAnswers || []) {
-    const norm = normalizeAnswer(a);
-    if (!norm) continue;
-
-    if (u === norm) return true;
-
-    const maxDist = allowedDistance(norm.length);
-    const dist = levenshtein(u, norm);
-    if (dist <= maxDist) return true;
-  }
-
-  return false;
 }
 
 // -------------------- existing glossary/royal/etc below unchanged --------------------
@@ -1589,6 +1509,8 @@ window.mapsSetLabelValue = mapsSetLabelValue;
 window.mapsToggleBank = mapsToggleBank;
 window.mapsClearLabels = mapsClearLabels;
 window.mapsCheckLabels = mapsCheckLabels;
+window.mapsRevealSelfcheck = mapsRevealSelfcheck;
+window.mapsSelfcheckSetResult = mapsSelfcheckSetResult;
 
 window.setRoyalMode = setRoyalMode;
 window.royalAllowDrop = royalAllowDrop;
@@ -1815,4 +1737,183 @@ function renderInlineMd(s) {
   return safe
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
     .replace(/\*(.+?)\*/g, "<em>$1</em>");
+}
+
+function mapsSelectPack(packId) {
+    const st = ensureMapsState();
+    st.selectedPackId = unescapeHtml(packId);
+    st.selectedItemId = "";
+    render();
+}
+
+function mapsSelectItem(packId, itemId) {
+    const st = ensureMapsState();
+    st.selectedPackId = unescapeHtml(packId);
+    st.selectedItemId = unescapeHtml(itemId);
+    render();
+}
+
+function mapsSetLabelValue(inputsKey, n, value) {
+  const st = ensureMapsState();
+  const key = unescapeHtml(inputsKey);
+  const labelKey = unescapeHtml(n);
+
+  if (!st.labelInputs[key]) st.labelInputs[key] = {};
+  st.labelInputs[key][labelKey] = value ?? "";
+
+  // IMPORTANT: do NOT call render() here, otherwise the input loses focus on every keystroke.
+  // Visual feedback is applied when pressing "Ellenőrzés".
+}
+
+function mapsToggleBank(inputsKey) {
+  const st = ensureMapsState();
+  const key = unescapeHtml(inputsKey);
+
+  st.showBank[key] = !st.showBank[key];
+  render();
+}
+
+function mapsClearLabels(packId, itemId) {
+  const st = ensureMapsState();
+  const key = `${unescapeHtml(packId)}__${unescapeHtml(itemId)}`;
+
+  st.labelInputs[key] = {};
+
+  if (!st.perLabelStatus) st.perLabelStatus = {};
+  st.perLabelStatus[key] = {};
+
+  // Optional: clear square state back to "new" for this item
+  if (st.lastCheck) {
+    const sqKey = key;
+    delete st.lastCheck[sqKey];
+  }
+
+  render();
+}
+
+function mapsCheckLabels(packId, itemId) {
+  const st = ensureMapsState();
+  const pid = unescapeHtml(packId);
+  const iid = unescapeHtml(itemId);
+
+  const pack = (DATA.maps?.packs || []).find((p) => p.id === pid);
+  const item = (pack?.items || []).find((it) => it.id === iid);
+  if (!pack || !item) return;
+
+  const inputsKey = `${pid}__${iid}`;
+  const labels = item.labels || [];
+  const inState = st.labelInputs[inputsKey] || {};
+
+  if (!st.perLabelStatus) st.perLabelStatus = {};
+  st.perLabelStatus[inputsKey] = {};
+
+  for (const l of labels) {
+    const n = String(l.n);
+    const user = inState[n] ?? "";
+    const ok = isAcceptedAnswer(user, l.answers || []);
+    st.perLabelStatus[inputsKey][n] = ok ? "ok" : "bad";
+  }
+
+  st.lastCheckedKey = inputsKey;
+
+  // update square status (used by the grid)
+  if (!st.lastCheck) st.lastCheck = {};
+  const sqKey = `${pid}__${iid}`;
+
+  const allOk = labels.every((l) => st.perLabelStatus[inputsKey][String(l.n)] === "ok");
+  const anyBad = labels.some((l) => st.perLabelStatus[inputsKey][String(l.n)] === "bad");
+
+  st.lastCheck[sqKey] = allOk ? "ok" : anyBad ? "bad" : "new";
+
+  render();
+}
+
+function dedupeStrings(arr) {
+  const out = [];
+  const seen = new Set();
+
+  for (const x of arr || []) {
+    const s = String(x ?? "").trim();
+    if (!s) continue;
+
+    const key = s.toLowerCase();
+    if (seen.has(key)) continue;
+
+    seen.add(key);
+    out.push(s);
+  }
+
+  return out;
+}
+
+function normalizeAnswer(s) {
+  return String(s ?? "")
+    .trim()
+    .toLowerCase()
+    // normalize whitespace
+    .replace(/\s+/g, " ")
+    // common punctuation normalization
+    .replace(/[.,;:!?()'"„“”’]/g, "")
+    // hyphens/long dashes as space
+    .replace(/[-–—]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function levenshtein(a, b) {
+  const s = String(a ?? "");
+  const t = String(b ?? "");
+  if (s === t) return 0;
+  if (!s) return t.length;
+  if (!t) return s.length;
+
+  const n = s.length;
+  const m = t.length;
+
+  let prev = new Array(m + 1);
+  let cur = new Array(m + 1);
+
+  for (let j = 0; j <= m; j++) prev[j] = j;
+
+  for (let i = 1; i <= n; i++) {
+    cur[0] = i;
+    const si = s.charCodeAt(i - 1);
+
+    for (let j = 1; j <= m; j++) {
+      const cost = si === t.charCodeAt(j - 1) ? 0 : 1;
+      cur[j] = Math.min(
+        prev[j] + 1, // deletion
+        cur[j - 1] + 1, // insertion
+        prev[j - 1] + cost, // substitution
+      );
+    }
+
+    const tmp = prev;
+    prev = cur;
+    cur = tmp;
+  }
+
+  return prev[m];
+}
+
+function isAcceptedAnswer(userInput, acceptedAnswers) {
+  const user = normalizeAnswer(userInput);
+  if (!user) return false;
+
+  const list = Array.isArray(acceptedAnswers) ? acceptedAnswers : [];
+  for (const a of list) {
+    const acc = normalizeAnswer(a);
+    if (!acc) continue;
+
+    // exact match after normalization
+    if (user === acc) return true;
+
+    // allow small typos only for longer strings
+    if (user.length >= 6 && acc.length >= 6) {
+      const dist = levenshtein(user, acc);
+      if (dist <= 1) return true; // one typo allowed
+    }
+  }
+
+  return false;
 }
