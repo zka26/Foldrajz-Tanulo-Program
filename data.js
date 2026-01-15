@@ -3,6 +3,7 @@ import { TOPIC_G2 } from "./topics/data_g2.js";
 import { TOPIC_G3 } from "./topics/data_g3.js";
 import { TOPIC_G4 } from "./topics/data_g4.js";
 import { TOPIC_G5 } from "./topics/data_g5.js";
+import { TOPIC_G6 } from "./topics/data_g6.js";
 
 const DATA = {
   meta: {
@@ -33,7 +34,7 @@ const DATA = {
     },
   },
 
-  topics: [TOPIC_G1, TOPIC_G2, TOPIC_G3, TOPIC_G4, TOPIC_G5],
+  topics: [TOPIC_G1, TOPIC_G2, TOPIC_G3, TOPIC_G4, TOPIC_G5, TOPIC_G6],
 
   glossary: [
     {
