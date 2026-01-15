@@ -5,7 +5,7 @@ const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 const STORAGE_KEY = "hu_b2_history_base_v1";
 
 const state = {
-  view: "home", // home | topic | glossary | royal
+  view: "home", // home | topic | glossary | maps | royal
   topicId: null,
   topicTab: "overview", // overview | cards | quiz
   lang: "hu", // hu | en | es
@@ -27,6 +27,7 @@ const state = {
   const navDefaults = {
     home: { hu: "Kezdőlap", en: "Home", es: "Inicio" },
     glossary: { hu: "Szójegyzék", en: "Glossary", es: "Glosario" },
+    maps: { hu: "Térképek", en: "Maps", es: "Mapas" },
     royal: { hu: "Királyvonal", en: "Royal line", es: "Línea real" },
     open: { hu: "Megnyitás", en: "Open", es: "Abrir" },
     progress: { hu: "Teljesítve", en: "Progress", es: "Progreso" },
@@ -39,6 +40,16 @@ const state = {
 
   // --- Glossary: ensure array
   if (!Array.isArray(DATA.glossary)) DATA.glossary = [];
+
+  // --- Maps: ensure shape
+  if (!DATA.maps) {
+    DATA.maps = {
+      title: { hu: "Térképek és Ábrák", en: "Maps & Diagrams", es: "Mapas y Diagramas" },
+      subtitle: { hu: "", en: "", es: "" },
+      packs: [],
+    };
+  }
+  if (!Array.isArray(DATA.maps.packs)) DATA.maps.packs = [];
 
   // --- Royal line: ensure modes is array
   if (!DATA.royalLine) {
@@ -222,6 +233,9 @@ function resetAllProgress() {
     delete state[key];
   }
 
+  // Clear maps in-memory state too
+  if (window.__mapsState) window.__mapsState = {};
+
   // Clear in-memory (non-persisted) game state too
   if (window.__orderState) window.__orderState = {};
   if (window.__matchState) window.__matchState = {};
@@ -246,7 +260,7 @@ function renderTopbar() {
   $$(".navBtn").forEach((b) => b.classList.remove("active", "activeHome"));
   $(`.navBtn[data-nav="${state.view}"]`)?.classList.add("active");
 
-  if (state.view === "glossary" || state.view === "royal") {
+  if (state.view === "glossary" || state.view === "royal" || state.view === "maps") {
     $(`.navBtn[data-nav="home"]`)?.classList.add("activeHome");
   }
 }
@@ -380,13 +394,14 @@ function renderTopicOverview(topic) {
           .map((m) => {
             const lines = (m.lines || [])
               .map((l) => {
-                const text = t(l);
-                const hasAsset = /assets\/.+\.(png|jpg|jpeg|webp|gif|svg)/i.test(text);
-                const src = hasAsset ? text.match(/assets\/[^\s]+/i)?.[0] : "";
-
+                const path = t(l);
+                // If the line contains an assets path, show a preview image (safe fallback to placeholder)
+                const hasAsset = /assets\/.+\.(png|jpg|jpeg|webp|gif|svg)/i.test(path);
+                const src = hasAsset ? path.match(/assets\/[^\s]+/i)?.[0] : "";
                 return `
+
                   <div style="display:flex; flex-direction:column; gap:8px; margin-top:10px;">
-                    <div style="color:var(--muted); font-size:12.5px;">${escapeHtml(text)}</div>
+                    <div style="color:var(--muted); font-size:12.5px;">${escapeHtml(path)}</div>
                     ${
                       src
                         ? `<div class="media"><img src="${escapeHtml(src)}" alt="" onerror="this.src='assets/placeholder.svg'"/></div>`
@@ -490,6 +505,7 @@ function renderTopicCards(topic) {
             </div>
           `
           : `
+
             <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
               <button class="btn primary" onclick="revealCard('${topic.id}')">${revealText}</button>
               <button class="btn" onclick="nextCard('${topic.id}')">${nextText}</button>
@@ -825,6 +841,368 @@ function checkMatch(topicId, qid, localKey) {
     st.locked = true;
     markCorrect(topicId, qid);
   }
+}
+
+// -------------------- MAPS (label mode) --------------------
+
+function ensureMapsState() {
+  if (!window.__mapsState) window.__mapsState = {};
+  if (!window.__mapsState.selectedPackId) window.__mapsState.selectedPackId = "";
+  if (!window.__mapsState.selectedItemId) window.__mapsState.selectedItemId = "";
+  if (!window.__mapsState.labelInputs) window.__mapsState.labelInputs = {};
+  if (!window.__mapsState.showBank) window.__mapsState.showBank = {};
+  if (!window.__mapsState.shuffle) window.__mapsState.shuffle = {};
+  return window.__mapsState;
+}
+
+function renderMaps() {
+  const root = $("#app");
+  const maps = DATA.maps;
+  const st = ensureMapsState();
+
+  const packs = maps?.packs || [];
+  const selectedPack = packs.find((p) => p.id === st.selectedPackId) || packs[0] || null;
+
+  if (!selectedPack) {
+    root.innerHTML = `
+      <section class="card pad">
+        <div class="view-head">
+          <div class="meta">
+            <h2>${t(maps?.title)}</h2>
+            <div class="subtitle">${t(maps?.subtitle)}</div>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="qtext" style="opacity:.8;">${state.lang === "hu" ? "Nincs térkép csomag." : state.lang === "es" ? "No hay packs." : "No packs."}</div>
+      </section>
+    `;
+    return;
+  }
+
+  if (!st.selectedPackId) st.selectedPackId = selectedPack.id;
+
+  const items = selectedPack.items || [];
+  const selectedItem = items.find((it) => it.id === st.selectedItemId) || items[0] || null;
+  if (selectedItem && !st.selectedItemId) st.selectedItemId = selectedItem.id;
+
+  // Squares: each item gets a square, status depends on correctness after "check" is pressed
+  const sqHtml = items
+    .map((it) => {
+      const sqKey = `${selectedPack.id}__${it.id}`;
+      const status = st.lastCheck?.[sqKey] || "new"; // new | ok | bad
+      const cls = status === "ok" ? "sq ok" : status === "bad" ? "sq bad" : "sq new";
+
+      return `
+        <div class="${cls}" onclick="mapsSelectItem('${escapeHtml(selectedPack.id)}','${escapeHtml(it.id)}')">
+          ${escapeHtml(it.id)}
+        </div>
+      `;
+    })
+    .join("");
+
+  const packButtons = packs
+    .map((p) => {
+      const active = p.id === selectedPack.id;
+      return `<button class="btn ${active ? "primary" : ""}" onclick="mapsSelectPack('${escapeHtml(p.id)}')">${t(p.title) || p.id}</button>`;
+    })
+    .join("");
+
+  const main =
+    selectedPack.type === "label" && selectedItem
+      ? renderMapsLabel(selectedPack, selectedItem)
+      : `
+        <div class="qcard">
+          <h4>${state.lang === "hu" ? "Nem támogatott típus" : state.lang === "es" ? "Tipo no soportado" : "Unsupported type"}</h4>
+          <div class="qtext">${escapeHtml(String(selectedPack.type || ""))}</div>
+        </div>
+      `;
+
+  root.innerHTML = `
+    <section class="card pad">
+      <div class="view-head">
+        <div class="meta">
+          <h2>${t(maps.title)}</h2>
+          <div class="subtitle">${t(maps.subtitle)}</div>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        ${packButtons}
+      </div>
+
+      <div class="qcard" style="margin-top:12px;">
+        <h4 style="margin:0;">${t(selectedPack.title) || selectedPack.id}</h4>
+        <div class="qtext" style="color:var(--muted); margin-top:6px;">${t(selectedPack.subtitle) || ""}</div>
+        <div class="sq-grid">${sqHtml}</div>
+      </div>
+
+      ${main}
+    </section>
+  `;
+}
+
+function renderMapsLabel(pack, item) {
+  const st = ensureMapsState();
+  const inputsKey = `${pack.id}__${item.id}`;
+  if (!st.labelInputs[inputsKey]) st.labelInputs[inputsKey] = {};
+  const inState = st.labelInputs[inputsKey];
+
+  // stable shuffle for bank
+  if (!st.shuffle[inputsKey]) st.shuffle[inputsKey] = `${inputsKey}_${Date.now()}`;
+
+  const labels = item.labels || [];
+  if (!Array.isArray(labels) || labels.length === 0) {
+    return `
+      <div class="qcard" style="margin-top:12px;">
+        <h4>${escapeHtml(item.id)}</h4>
+        <div class="qtext" style="opacity:.8;">${state.lang === "hu" ? "Nincs címke adat." : state.lang === "es" ? "No hay etiquetas." : "No labels."}</div>
+      </div>
+    `;
+  }
+
+  const statusMap = (st.perLabelStatus?.[inputsKey] || {}); // n -> ok|bad|new
+  const allOk = labels.every((l) => statusMap[String(l.n)] === "ok");
+  const anyBad = labels.some((l) => statusMap[String(l.n)] === "bad");
+  const sqKey = `${pack.id}__${item.id}`;
+  if (!st.lastCheck) st.lastCheck = {};
+  if (st.lastCheckedKey === inputsKey) {
+    st.lastCheck[sqKey] = allOk ? "ok" : anyBad ? "bad" : "new";
+  }
+
+  const formRows = labels
+    .map((l) => {
+      const n = String(l.n);
+      const val = inState[n] ?? "";
+      const s = statusMap[n] || "new";
+
+      const border =
+        s === "ok"
+          ? "rgba(100,200,120,.55)"
+          : s === "bad"
+            ? "rgba(255,90,112,.60)"
+            : "var(--border)";
+
+      return `
+        <div class="map-row">
+          <label>${escapeHtml(n)}</label>
+          <input
+            value="${escapeHtml(val)}"
+            placeholder="${state.lang === "hu" ? "Írd be..." : state.lang === "es" ? "Escribe..." : "Type..."}"
+            oninput="mapsSetLabelValue('${escapeHtml(inputsKey)}','${escapeHtml(n)}', this.value)"
+            style="border-color:${border};"
+            spellcheck="false"
+            autocomplete="off"
+          />
+        </div>
+      `;
+    })
+    .join("");
+
+  const allAnswers = labels.flatMap((l) => (Array.isArray(l.answers) ? l.answers : []));
+  const bank = shuffleSeeded(dedupeStrings(allAnswers), st.shuffle[inputsKey]);
+
+  const show = !!st.showBank[inputsKey];
+  const bankHtml = show ? bank.map((a) => escapeHtml(a)).join(" • ") : "";
+
+  return `
+    <div class="qcard" style="margin-top:12px;">
+      <h4>${escapeHtml(item.id)} • ${state.lang === "hu" ? "Címkék" : state.lang === "es" ? "Etiquetas" : "Labels"}</h4>
+      <div class="qtext" style="color:var(--muted);">${t(item.prompt)}</div>
+
+      <div class="media" style="margin-top:10px;">
+        <img src="${escapeHtml(item.image)}" alt="" onerror="this.src='assets/placeholder.svg'"/>
+      </div>
+
+      <div class="map-form">
+        ${formRows}
+      </div>
+
+      <div class="map-actions">
+        <button class="btn primary" onclick="mapsCheckLabels('${escapeHtml(pack.id)}','${escapeHtml(item.id)}')">${state.lang === "hu" ? "Ellenőrzés" : state.lang === "es" ? "Comprobar" : "Check"}</button>
+        <button class="btn" onclick="mapsClearLabels('${escapeHtml(pack.id)}','${escapeHtml(item.id)}')">${state.lang === "hu" ? "Törlés" : state.lang === "es" ? "Borrar" : "Clear"}</button>
+        <button class="btn" onclick="mapsToggleBank('${escapeHtml(inputsKey)}')">${show ? (state.lang === "hu" ? "Elrejtés" : state.lang === "es" ? "Ocultar" : "Hide") : state.lang === "hu" ? "Mutat" : state.lang === "es" ? "Mostrar" : "Show"}</button>
+      </div>
+
+      ${
+        show
+          ? `
+            <div class="answer-bank">
+              ${state.lang === "hu" ? "Segítség (keverve): " : state.lang === "es" ? "Ayuda (mezclado): " : "Help (shuffled): "}
+              ${bankHtml}
+            </div>
+          `
+          : ""
+      }
+
+      <div class="feedback" style="display:block; margin-top:12px;">
+        ${
+          allOk
+            ? state.lang === "hu"
+              ? "Minden címke jó."
+              : state.lang === "es"
+                ? "Todo correcto."
+                : "All correct."
+            : state.lang === "hu"
+              ? "Ellenőrzés után a jó mezők zöldek, a hibásak pirosak."
+              : state.lang === "es"
+                ? "Tras comprobar: correctos en verde, incorrectos en rojo."
+                : "After checking: correct fields turn green; incorrect turn red."
+        }
+      </div>
+    </div>
+  `;
+}
+
+function mapsSelectPack(packId) {
+  const st = ensureMapsState();
+  st.selectedPackId = unescapeHtml(packId);
+  st.selectedItemId = "";
+  render();
+}
+
+function mapsSelectItem(packId, itemId) {
+  const st = ensureMapsState();
+  st.selectedPackId = unescapeHtml(packId);
+  st.selectedItemId = unescapeHtml(itemId);
+  render();
+}
+
+function mapsSetLabelValue(inputsKey, n, value) {
+  const st = ensureMapsState();
+  const key = unescapeHtml(inputsKey);
+  const labelKey = unescapeHtml(n);
+  if (!st.labelInputs[key]) st.labelInputs[key] = {};
+  st.labelInputs[key][labelKey] = value ?? "";
+
+  // IMPORTANT: do NOT call render() here, otherwise the input loses focus on every keystroke.
+  // Visual feedback is applied when pressing "Ellenőrzés".
+}
+
+function mapsToggleBank(inputsKey) {
+  const st = ensureMapsState();
+  const key = unescapeHtml(inputsKey);
+  st.showBank[key] = !st.showBank[key];
+  render();
+}
+
+function mapsClearLabels(packId, itemId) {
+  const st = ensureMapsState();
+  const key = `${unescapeHtml(packId)}__${unescapeHtml(itemId)}`;
+  st.labelInputs[key] = {};
+  if (!st.perLabelStatus) st.perLabelStatus = {};
+  st.perLabelStatus[key] = {};
+  render();
+}
+
+function mapsCheckLabels(packId, itemId) {
+  const st = ensureMapsState();
+  const pid = unescapeHtml(packId);
+  const iid = unescapeHtml(itemId);
+
+  const pack = (DATA.maps?.packs || []).find((p) => p.id === pid);
+  const item = (pack?.items || []).find((it) => it.id === iid);
+  if (!pack || !item) return;
+
+  const inputsKey = `${pid}__${iid}`;
+  const labels = item.labels || [];
+  const inState = st.labelInputs[inputsKey] || {};
+
+  if (!st.perLabelStatus) st.perLabelStatus = {};
+  st.perLabelStatus[inputsKey] = {};
+
+  for (const l of labels) {
+    const n = String(l.n);
+    const user = inState[n] ?? "";
+    const ok = isAcceptedAnswer(user, l.answers || []);
+    st.perLabelStatus[inputsKey][n] = ok ? "ok" : "bad";
+  }
+
+  st.lastCheckedKey = inputsKey;
+
+  // update square state
+  if (!st.lastCheck) st.lastCheck = {};
+  const sqKey = `${pid}__${iid}`;
+  const allOk = labels.every((l) => st.perLabelStatus[inputsKey][String(l.n)] === "ok");
+  const anyBad = labels.some((l) => st.perLabelStatus[inputsKey][String(l.n)] === "bad");
+  st.lastCheck[sqKey] = allOk ? "ok" : anyBad ? "bad" : "new";
+
+  render();
+}
+
+function dedupeStrings(arr) {
+  const seen = new Set();
+  const res = [];
+  for (const x of arr || []) {
+    const s = String(x ?? "").trim();
+    if (!s) continue;
+    const k = s.toLowerCase();
+    if (seen.has(k)) continue;
+    seen.add(k);
+    res.push(s);
+  }
+  return res;
+}
+
+function normalizeAnswer(s) {
+  // lower + trim + remove accents + collapse whitespace
+  const raw = String(s ?? "")
+    .trim()
+    .toLowerCase();
+
+  return raw
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function levenshtein(a, b) {
+  if (a === b) return 0;
+  if (a.length === 0) return b.length;
+  if (b.length === 0) return a.length;
+
+  const v0 = new Array(b.length + 1);
+  const v1 = new Array(b.length + 1);
+
+  for (let i = 0; i <= b.length; i++) v0[i] = i;
+
+  for (let i = 0; i < a.length; i++) {
+    v1[0] = i + 1;
+    for (let j = 0; j < b.length; j++) {
+      const cost = a[i] === b[j] ? 0 : 1;
+      v1[j + 1] = Math.min(v1[j] + 1, v0[j + 1] + 1, v0[j] + cost);
+    }
+    for (let j = 0; j <= b.length; j++) v0[j] = v1[j];
+  }
+
+  return v1[b.length];
+}
+
+function allowedDistance(len) {
+  // "medium tolerance" rule (confirmed)
+  if (len <= 6) return 1;
+  if (len <= 12) return 2;
+  return 3;
+}
+
+function isAcceptedAnswer(userValue, acceptedAnswers) {
+  const u = normalizeAnswer(userValue);
+  if (!u) return false;
+
+  for (const a of acceptedAnswers || []) {
+    const norm = normalizeAnswer(a);
+    if (!norm) continue;
+
+    if (u === norm) return true;
+
+    const maxDist = allowedDistance(norm.length);
+    const dist = levenshtein(u, norm);
+    if (dist <= maxDist) return true;
+  }
+
+  return false;
 }
 
 // -------------------- existing glossary/royal/etc below unchanged --------------------
@@ -1190,6 +1568,7 @@ function render() {
   if (state.view === "home") return renderHome();
   if (state.view === "topic") return renderTopic();
   if (state.view === "glossary") return renderGlossary();
+  if (state.view === "maps") return renderMaps();
   if (state.view === "royal") return renderRoyal();
 
   renderHome();
@@ -1203,6 +1582,13 @@ window.answerImageMCQ = answerImageMCQ;
 window.moveOrder = moveOrder;
 window.resetOrder = resetOrder;
 window.checkOrder = checkOrder;
+
+window.mapsSelectPack = mapsSelectPack;
+window.mapsSelectItem = mapsSelectItem;
+window.mapsSetLabelValue = mapsSetLabelValue;
+window.mapsToggleBank = mapsToggleBank;
+window.mapsClearLabels = mapsClearLabels;
+window.mapsCheckLabels = mapsCheckLabels;
 
 window.setRoyalMode = setRoyalMode;
 window.royalAllowDrop = royalAllowDrop;

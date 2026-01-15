@@ -4,6 +4,7 @@ import { TOPIC_G3 } from "./topics/data_g3.js";
 import { TOPIC_G4 } from "./topics/data_g4.js";
 import { TOPIC_G5 } from "./topics/data_g5.js";
 import { TOPIC_G6 } from "./topics/data_g6.js";
+import { MAPS } from "./maps/data_maps.js";
 
 const DATA = {
   meta: {
@@ -26,6 +27,7 @@ const DATA = {
     nav: {
       home: { hu: "Témák", es: "Temas", en: "Topics" },
       glossary: { hu: "Szójegyzék", es: "Glosario", en: "Glossary" },
+      maps: { hu: "Térképek és Ábrák", es: "Mapas y Diagramas", en: "Maps & Diagrams" },
 
       open: { hu: "Megnyitás", es: "Abrir", en: "Open" },
       progress: { hu: "Teljesítve", es: "Progreso", en: "Progress" },
@@ -35,6 +37,7 @@ const DATA = {
   },
 
   topics: [TOPIC_G1, TOPIC_G2, TOPIC_G3, TOPIC_G4, TOPIC_G5, TOPIC_G6],
+  maps: MAPS,
 
   glossary: [
     {
